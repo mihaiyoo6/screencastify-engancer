@@ -31,21 +31,22 @@ async function run() {
     });
   });
 
-
-
-const rootObserver = new MutationObserver(function (mutations_list) {
-  const root = document.querySelector("castify-draw-container");
-  mutations_list.forEach(function (mutation) {
-    if (mutation.attributeName === "style") {
-      updateCamera(document.querySelector("castify-draw-container"));
-    }
-    mutation.addedNodes.forEach(function (added_node) {
-      if (added_node.nodeName === "CF-CAM-VIEW") {
-        updateCamera(root);
+  const rootObserver = new MutationObserver(function (mutations_list) {
+    const root = document.querySelector("castify-draw-container");
+    mutations_list.forEach(function (mutation) {
+      if (
+        mutation.attributeName === "style" &&
+        mutation.target.nodeName === "CF-RESIZEABLE"
+      ) {
+        updateCamera(document.querySelector("castify-draw-container"));
       }
+      mutation.addedNodes.forEach(function (added_node) {
+        if (added_node.nodeName === "CF-CAM-VIEW") {
+          updateCamera(root);
+        }
+      });
     });
   });
-});
 
   const bodyObserver = new MutationObserver(function (mutations_list) {
     mutations_list.forEach(function (mutation) {
@@ -74,7 +75,6 @@ const rootObserver = new MutationObserver(function (mutations_list) {
   });
 
   bodyObserver.observe(document.body, { subtree: false, childList: true });
-
 }
 
 window.addEventListener(
@@ -87,4 +87,3 @@ window.addEventListener(
   },
   false
 );
-
