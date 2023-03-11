@@ -25,7 +25,10 @@ async function run() {
   };
   const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
-      if (mutation.attributeName === "style") {
+      if (
+        mutation.attributeName === "style" &&
+        mutation.target.nodeName === "CF-RESIZEABLE"
+      ) {
         updateCamera(document.querySelector("castify-draw-container"));
       }
     });
@@ -33,6 +36,7 @@ async function run() {
 
   const rootObserver = new MutationObserver(function (mutations_list) {
     const root = document.querySelector("castify-draw-container");
+    observer.disconnect();
     mutations_list.forEach(function (mutation) {
       if (
         mutation.attributeName === "style" &&
@@ -65,7 +69,7 @@ async function run() {
               subtree: true,
               attributes: true,
               attributeFilter: ["style"],
-              childList: true,
+              childList: false,
             }
           );
           // bodyObserver.disconnect();
