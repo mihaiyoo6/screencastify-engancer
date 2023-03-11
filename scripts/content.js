@@ -31,6 +31,20 @@ async function run() {
     });
   });
 
+
+
+const rootObserver = new MutationObserver(function (mutations_list) {
+  mutations_list.forEach(function (mutation) {
+    mutation.addedNodes.forEach(function (added_node) {
+      console.log(added_node.nodeName);
+      if (added_node.nodeName === "CF-CAM-VIEW") {
+        const root = document.querySelector("castify-draw-container");
+        updateCamera(root);
+      }
+    });
+  });
+});
+
   const bodyObserver = new MutationObserver(function (mutations_list) {
     mutations_list.forEach(function (mutation) {
       mutation.addedNodes.forEach(function (added_node) {
@@ -42,6 +56,14 @@ async function run() {
           root.shadowRoot.querySelector(".toolbox-wrapper").style.display =
             "none";
           observer.observe(cameraContainer, observerConfig);
+          rootObserver.observe(
+            document.querySelector("castify-draw-container").shadowRoot,
+            {
+              subtree: true,
+              attributes: false,
+              childList: true,
+            }
+          );
           // bodyObserver.disconnect();
         }
       });
@@ -49,6 +71,7 @@ async function run() {
   });
 
   bodyObserver.observe(document.body, { subtree: false, childList: true });
+
 }
 
 window.addEventListener(
@@ -61,3 +84,4 @@ window.addEventListener(
   },
   false
 );
+
